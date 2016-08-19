@@ -113,11 +113,11 @@ function(module, exports, __webpack_require__) {
             _this.onClickPick = function(e) {
                 e.preventDefault(), e.stopPropagation();
                 var filepicker = __webpack_require__(3), _this$props = _this.props, apikey = _this$props.apikey, onSuccess = _this$props.onSuccess, onError = _this$props.onError, onProgress = _this$props.onProgress, options = _this$props.options, mode = _this$props.mode, blob = _this$props.blob, input = _this$props.input, onFinished = function(blob) {
-                    "function" == typeof onSuccess ? onSuccess(blob) : console.log(blob);
+                    "function" == typeof onSuccess && onSuccess(blob);
                 }, onFail = function(error) {
-                    "function" == typeof onError ? onError(error) : console.error(error);
+                    "function" == typeof onError && onError(error);
                 }, onUploading = function(progress) {
-                    "function" == typeof onProgress ? onProgress(progress) : console.log(progress);
+                    "function" == typeof onProgress && onProgress(progress);
                 };
                 filepicker.setKey(apikey), "export" === mode ? filepicker.exportFile(blob || options.url, options, onFinished, onFail, onUploading) : "convert" === mode ? filepicker.convert(blob, options, options, onFinished, onFail, onUploading) : "pickAndStore" === mode ? filepicker.pickAndStore(options, options, onFinished, onFail, onUploading) : "pickMultiple" === mode || options.multiple ? filepicker.pickMultiple(options, onFinished, onFail, onUploading) : "read" === mode ? filepicker.read(input || options.url, options, onFinished, onError, onUploading) : "store" === mode ? filepicker.store(input, options, onFinished, onError, onUploading) : "storeUrl" === mode ? filepicker.storeUrl(options.url, options, onFinished, onError, onUploading) : "stat" === mode ? filepicker.stat(blob, options, onFinished, onError) : "write" === mode ? filepicker.write(blob, input, options, onFinished, onError, onUploading) : "writeUrl" === mode ? filepicker.writeUrl(blob, options.url, options, onFinished, onError, onUploading) : filepicker.pick(options, onFinished, onFail, onUploading);
             }, _ret = _temp, _possibleConstructorReturn(_this, _ret);
@@ -134,7 +134,7 @@ function(module, exports, __webpack_require__) {
                     element.setAttribute("data-fp-button-text", buttonText || options.buttonText || "Pick File"), 
                     element.setAttribute("data-fp-button-class", buttonClass || options.buttonClass || "fp__btn"), 
                     element.onchange = function(e) {
-                        "function" == typeof onSuccess ? onSuccess(e.fpfile) : console.log(e.fpfile);
+                        "function" == typeof onSuccess && onSuccess(e.fpfile);
                     }, filepicker.constructWidget(element), element.setAttribute("type", "");
                 }
             }
@@ -385,9 +385,11 @@ function(module, exports, __webpack_require__) {
                     apiIFrame.src = fp.urls.API_COMM, apiIFrame.style.display = "none", document.body.appendChild(apiIFrame);
                 }
             }, communicationsHandler = function(event) {
-                if (event.origin === fp.urls.BASE || event.origin === fp.urls.DIALOG_BASE) {
+                if (event.origin === fp.urls.BASE || event.origin === fp.urls.DIALOG_BASE) try {
                     var data = fp.json.parse(event.data);
                     fp.handlers.run(data);
+                } catch (err) {
+                    console.log("[Filepicker] Failed processing message:", event.data);
                 }
             }, isOpen = !1, openCommunicationsChannel = function() {
                 if (!isOpen) if (isOpen = !0, window.addEventListener) window.addEventListener("message", communicationsHandler, !1); else {
@@ -879,7 +881,7 @@ function(module, exports, __webpack_require__) {
                 handleError: handleError
             };
         }, !0), filepicker.extend(function() {
-            var fp = this, VERSION = "2.4.16";
+            var fp = this, VERSION = "2.4.17";
             fp.API_VERSION = "v2";
             var setKey = function(key) {
                 fp.apikey = key;
@@ -1824,7 +1826,7 @@ function(module, exports, __webpack_require__) {
                 return "string" == typeof url && url.match("/api/file/");
             }, getFPUrl = function(url) {
                 if ("string" == typeof url) {
-                    var matched = url.match(/(?:cdn.filestackcontent.com|cdn.filepicker.io)[\S]*\/([\S]{20,})/);
+                    var matched = url.match(/(?:^https?:\/\/cdn.filestackcontent.com|^https?:\/\/cdn.filepicker.io)[\S]*\/([\S]{20,})/);
                     if (matched && matched.length > 1) return fp.urls.BASE + "/api/file/" + matched[1];
                 }
                 return url;

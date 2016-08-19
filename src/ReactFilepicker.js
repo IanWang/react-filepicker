@@ -126,7 +126,6 @@ class ReactFilepicker extends Component {
         if (typeof onSuccess === 'function') {
           onSuccess(e.fpfile);
         } else {
-          console.log(e.fpfile);
         }
       };
       filepicker.constructWidget(element);
@@ -143,21 +142,18 @@ class ReactFilepicker extends Component {
       if (typeof onSuccess === 'function') {
         onSuccess(blob);
       } else {
-        console.log(blob);
       }
     };
     const onFail = (error) => {
       if (typeof onError === 'function') {
         onError(error);
       } else {
-        console.error(error);
       }
     };
     const onUploading = (progress) => {
       if (typeof onProgress === 'function') {
         onProgress(progress);
       } else {
-        console.log(progress);
       }
     };
     filepicker.setKey(apikey);
